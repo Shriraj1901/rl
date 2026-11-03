@@ -280,6 +280,11 @@ class CountdownRewardParser(Transform):
         """
         if not re.fullmatch(r"[\d\s\+\-\*/\(\)\.]+", expression):
             return False
+        # ``**`` passes the character check above, but exponentiation is not an
+        # allowed operator and a chain such as ``50**25**7`` makes ``eval`` run
+        # for hours.
+        if "**" in expression:
+            return False
         used = [int(n) for n in re.findall(r"\d+", expression)]
         available = list(numbers)
         for n in used:
